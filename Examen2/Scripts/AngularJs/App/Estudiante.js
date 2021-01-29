@@ -29,6 +29,24 @@
         $scope.MostrarVista = 0;
     }
 
+    $scope.ButtonClick = function () {
+        var post = $http({
+            method: "POST",
+            url: "/Home/AjaxMethod",
+            dataType: 'json',
+            data: { name: $scope.Name },
+            headers: { "Content-Type": "application/json" }
+        });
+
+        post.success(function (data, status) {
+            $window.alert("Hello: " + data.Name + " .\nCurrent Date and Time: " + data.DateTime);
+        });
+
+        post.error(function (data, status) {
+            $window.alert(data.Message);
+        });
+    }
+
 }]);
 
 
