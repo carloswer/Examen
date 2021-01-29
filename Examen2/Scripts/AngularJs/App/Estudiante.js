@@ -16,6 +16,10 @@
         });
     }
 
+    $scope.subirArchivoImportacion = function () {
+        $('#myModalImportarArchivo').modal("show");
+    }
+
     $scope.graficarCalificaciones = function () {
         graficaBarrasCalificaciones($scope.listaEstudiantes, $scope.totalEstudiantes);
         $scope.MostrarVista = 1;

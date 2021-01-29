@@ -12,17 +12,18 @@
             </section>
 
             <section class="content reloadPage">
-                <div class="box box-primary"></div> 
+                <div class="box box-primary"></div>
 
                 <div class="box">
                     <div class="box-header">
                         <span style="font-weight:bold; font-size: 15px;">Total:</span>&nbsp;&nbsp;<span style="font-size: 16px;" ng-bind="totalEstudiantes"></span>
                         <button ng-click="graficarCalificaciones()">Graficar calificaciones</button>
+                        <button ng-click="subirArchivoImportacion()">Importar archivo</button>
                     </div>
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-sm table-striped table-hover compact">
                             <thead>
-                                <tr> 
+                                <tr>
                                     <th> CLAVE </th>
                                     <th> NOMBRE </th>
                                     <th> APELLIDO PATERNO </th>
@@ -50,6 +51,48 @@
                     </div>
                 </div>
             </section>
+
+
+            <div id="myModalImportarArchivo" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Modal Header</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form action="~/Home/ImportarDatos" method="post" enctype="multipart/form-data" novalidate onSuc class="dropzone" id="dropzoneJsEstudiantes">
+
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="btnCargarArchivosColaborador" class="btn btn-sm btn-success">Subir archivo</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
         </div>
+
+
+
+
         @Html.Action("Grafica", "Home")
     </div>
+
+<script>
+    $('#dropzoneJsEstudiantes')
+        .ajaxForm({
+            url: '@Url.Action("ImportarDatos","Home")', // or whatever
+            dataType: 'multipart/form-data',
+            success: function (response) {
+                alert("lista: " + response);
+            }
+        });
+
+</script>
