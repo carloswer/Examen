@@ -16,109 +16,53 @@ namespace Examen2.Controllers
             return View();
         }
 
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-        }
 
         public ActionResult Grafica()
         {
             return View();
         }
 
-        [HttpPost]
         public JsonResult obtenerEstudiantes()
         {
-            try
+            Estudiante est = new Estudiante();
+            est.Nombres = "Carlos Eduardo";
+            est.ApellidoPaterno = "Noriega";
+            est.ApellidoMaterno = "Cazarez";
+            est.FechaNacimiento = new DateTime(1995,10,13);
+
+            var clave = crearClaveEstudiante(est,3);
+
+            return Json(new
             {
-                var listaEstudiantes = new List<Estudiante>();
-
-                var estudiante1 = new Estudiante
-                {
-                    Nombres = "Carlos Eduardo",
-                    ApellidoPaterno = "Noriega",
-                    ApellidoMaterno = "Cazarez",
-                    Calificacion = 95,
-                    Grupo = 'A',
-                    FechaNacimiento = DateTime.Now,
-                    Grado = 5
-                    };
-
-                var estudiante2 = new Estudiante
-                {
-                    Nombres = "Vianey Guadalupe",
-                    ApellidoPaterno = "Navarro",
-                    ApellidoMaterno = "Castillon",
-                    Calificacion = 100,
-                    Grupo = 'b',
-                    FechaNacimiento = DateTime.Now,
-                    Grado = 5
-                };
-
-                var estudiante3 = new Estudiante
-                {
-                    Nombres = "Roberto",
-                    ApellidoPaterno = "Lopez",
-                    ApellidoMaterno = "Castillon",
-                    Calificacion = 78,
-                    Grupo = 'B',
-                    FechaNacimiento = DateTime.Now,
-                    Grado = 5
-                };
-
-                var estudiante4 = new Estudiante
-                {
-                    Nombres = "Yamileth Reyna",
-                    ApellidoPaterno = "Solis",
-                    ApellidoMaterno = "Lopez",
-                    Calificacion = 57,
-                    Grupo = 'C',
-                    FechaNacimiento = DateTime.Now,
-                    Grado = 4
-                };
-
-                listaEstudiantes.Add(estudiante1);
-                listaEstudiantes.Add(estudiante2);
-                listaEstudiantes.Add(estudiante3);
-                listaEstudiantes.Add(estudiante4);
-
-
-                return Json(new
-                {
-                    listaEstudiantes = listaEstudiantes 
-                });
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+                clave = clave
+            });
         }
 
-
+        [HttpPost]
         public JsonResult ImportarDatos()
         {
             try
             {
                 HttpRequestBase request = Request;
 
-                //string path = "";
-                //foreach (string fileName in Request.Files)
-                //{
-                //    HttpPostedFileBase file = Request.Files[fileName];
+                string path = "";
 
-                //    if (file != null && file.ContentLength > 0)
-                //    {
-                //    }
-                //}
+                path = Server.MapPath("~/File");
+                foreach (string fileName in Request.Files)
+                {
+                    HttpPostedFileBase file = Request.Files[fileName];
+
+                    if (file != null && file.ContentLength > 0)
+                    {
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+
+                        path += file.FileName;
+                        file.SaveAs(path);
+                    }
+                }
 
                 ExcelPackage.LicenseContext = LicenseContext.Commercial;
                 List<Estudiante> listaEstudiantes = new List<Estudiante>();
@@ -126,7 +70,7 @@ namespace Examen2.Controllers
                 // Creamos una instancia de paquete de Excel de OfficeOpenXml
                 using (ExcelPackage paquete = new ExcelPackage())
                 {
-                    var filename = @"C:\Users\cnoriega\Desktop\Calificaciones.xlsx";
+                    var filename = path;
 
                     using (FileStream flujo = System.IO.File.Open(filename, FileMode.OpenOrCreate))
                     {
@@ -156,18 +100,17 @@ namespace Examen2.Controllers
                             FechaNacimiento = Convert.ToDateTime(hoja1.Cells[numFila, 4].Text), // FECHA DE NACIMIENTO
                             Grado = Convert.ToInt32(hoja1.Cells[numFila, 5].Text), // GRADO
                             Grupo = Convert.ToChar(hoja1.Cells[numFila, 6].Text), // GRUPO
-                            Calificacion = Convert.ToDecimal(hoja1.Cells[numFila, 7].Text) // CALIFICACION
+                            Calificacion = Convert.ToDecimal(hoja1.Cells[numFila, 7].Text) // CALIFICACION                            
                         };
+
+                        estudiante.Clave = crearClaveEstudiante(estudiante, 3);
 
                         listaEstudiantes.Add(estudiante);
                         
                     }
                 }
 
-                ViewBag.Lista = listaEstudiantes;
-                return Json(new {
-                    listado = listaEstudiantes
-                });
+                return Json(listaEstudiantes);
             }
             catch (Exception ex)
             {
@@ -176,6 +119,73 @@ namespace Examen2.Controllers
             finally
             {
                 
+            }
+        }
+
+
+        protected string crearClaveEstudiante(Estudiante estudiante, int veces)
+        {
+            try
+            {
+                var abc = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
+                var abc2 = "";
+
+                var clave = "";
+                estudiante.Edad = (DateTime.Now.Date - estudiante.FechaNacimiento.Date).Days / 365;
+                //CARLOS EDUARDO NORIEGA CAZAREZ
+                clave += estudiante.Nombres.ToUpper().Substring(0, 2);
+                clave += estudiante.ApellidoMaterno.ToUpper().Substring(estudiante.ApellidoMaterno.Length - 2, 2);
+
+                //CA EZ
+
+                var one = clave.ToCharArray()[0];
+                var two = clave.ToCharArray()[1];
+                var three = clave.ToCharArray()[2];
+                var four = clave.ToCharArray()[3];
+
+                char i = abc[0];
+                var check = false;
+                while (abc2.Length < abc.Length - 1)
+                {
+                    if (!check)
+                    {
+                        var value = i - veces;
+                        if (value < 'A')
+                        {
+                            var dif = value - 'A';
+                            i = (char)('Z' - Math.Abs(dif));
+                        }
+                        else
+                            check = true;
+                    }
+                    else
+                    {
+                        if (i >= 'Z')
+                        {
+                            i = 'A';
+                            check = true;
+                        }
+                        else
+                            i++;
+                    }
+
+                    abc2 += i + "";
+                    if (!check)
+                        i++;
+                }
+
+                clave = clave.Replace(one, (char)abc2[abc.IndexOf(one)]);
+                clave = clave.Replace(two, (char)abc2[abc.IndexOf(two)]);
+                clave = clave.Replace(three, (char)abc2[abc.IndexOf(three)]);
+                //clave = clave.Replace(four, (char)abc2[abc.IndexOf(four)]);
+
+                clave += estudiante.Edad;
+
+                return clave;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
 

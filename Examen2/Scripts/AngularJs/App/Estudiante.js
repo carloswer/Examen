@@ -4,17 +4,26 @@
     $scope.listaEstudiantes = [];
 
     $scope.obtenerEstudiantes = function () {
+        $scope.MostrarVista = 0;
+
         $http.post("/Home/obtenerEstudiantes").then(function (dataResult) {
             $scope.listaEstudiantes = dataResult.data.listaEstudiantes;
             $scope.totalEstudiantes = dataResult.data.listaEstudiantes.length;
             console.log($scope.listaEstudiantes);
-            $scope.MostrarVista = 0;
+            
         }, function (error) {
             console.log(error);
         }).finally(function () {
 
         });
     }
+
+    $scope.GuardarListaSessionStorage = function () {
+        var listadoEstudiantes = sessionStorage.getItem("listaEstudiantes");
+        var lista = JSON.parse(listadoEstudiantes)
+        $scope.listaEstudiantes = lista;
+    }
+
 
     $scope.subirArchivoImportacion = function () {
         $('#myModalImportarArchivo').modal("show");
@@ -29,27 +38,9 @@
         $scope.MostrarVista = 0;
     }
 
-    $scope.ButtonClick = function () {
-        var post = $http({
-            method: "POST",
-            url: "/Home/AjaxMethod",
-            dataType: 'json',
-            data: { name: $scope.Name },
-            headers: { "Content-Type": "application/json" }
-        });
-
-        post.success(function (data, status) {
-            $window.alert("Hello: " + data.Name + " .\nCurrent Date and Time: " + data.DateTime);
-        });
-
-        post.error(function (data, status) {
-            $window.alert(data.Message);
-        });
-    }
+    
 
 }]);
-
-
 
 
 function graficaBarrasCalificaciones(estudiantes, total) {    

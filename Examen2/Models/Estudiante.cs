@@ -12,6 +12,7 @@ namespace Examen2.Models
         public string ApellidoPaterno { get; set; }
         public string ApellidoMaterno { get; set; }
         public DateTime FechaNacimiento { get; set; }
+        public int Edad { get; set; }
         public int Grado{ get; set; }
         public char Grupo { get; set; }
         public Decimal Calificacion { get; set; }
