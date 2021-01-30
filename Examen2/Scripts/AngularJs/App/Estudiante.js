@@ -1,9 +1,9 @@
 ﻿app.controller("EstudiantesController", ["$rootScope", "$scope", "$http", "$window", function ($rootScope, $scope, $http, $window) {
 
-    $scope.Datos = [];
     $scope.listaEstudiantes = [];
     $scope.totalEstudiantes = 0;
 
+    //Si hay informacion almacenada, obtiene la lista de estudiantes y la muestra en pantalla
     $scope.obtenerEstudiantes = function () {
 
         var listadoEstudiantes = sessionStorage.getItem("listaEstudiantes");
@@ -19,6 +19,7 @@
         $scope.verClima();
     }
 
+    //Obtiene la lista de estudiantes guardada en SessionStorage para mostrarla en pantalla
     $scope.GuardarListaSessionStorage = function () {
         var listadoEstudiantes = sessionStorage.getItem("listaEstudiantes");
         var lista = JSON.parse(listadoEstudiantes)
@@ -28,6 +29,7 @@
         $scope.analizarCalificaciones();
     }
 
+    //Envia la lista de estudiantes al controlador para verificar cual es el estudiante con calificacion mayor, menor y el promedio
     $scope.analizarCalificaciones = function () {
 
         $http.post("/Home/analizarCalificaciones", $scope.listaEstudiantes).then(function (dataResult) {
@@ -42,6 +44,7 @@
         });
     }
 
+    //API DEL CLIMA
     $scope.verClima = function () {
 
         var city_Id = "4013704";
@@ -56,30 +59,18 @@
         });
     }
 
-    $scope.HabilitarBoton = function () {
-        console("Desabilitado");
-        $('#btnUpload').prop("disabled", false);
-        $("#btnUpload").removeAttr('disabled');
-    }
-
+    //Evento del boton para abrir modal donde se subira el archivo
     $scope.subirArchivoImportacion = function () {
         $('#txtVecesIterar').val("");
+        $("#FileUpload").val('');
         $('#myModalImportarArchivo').modal("show");
     }
 
+    //Grafica la calificacion de los estudiantes
     $scope.graficarCalificaciones = function () {
         graficaBarrasCalificaciones($scope.listaEstudiantes, $scope.totalEstudiantes);
-        $('#tabGraficaCalificaciones').addClass('active');
-        $('#itemBarGrafica').addClass('active');
     }
 
-    //$scope.refreshChart = function () {
-    //    $("#contenedorGrafica").load();
-    //}
-
-    $scope.VolverInicio = function () {
-        $scope.MostrarVista = 0;
-    }
 
 }]);
 
