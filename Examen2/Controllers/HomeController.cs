@@ -22,22 +22,7 @@ namespace Examen2.Controllers
             return View();
         }
 
-        //public JsonResult obtenerEstudiantes()
-        //{
-        //    Estudiante est = new Estudiante();
-        //    est.Nombres = "Carlos Eduardo";
-        //    est.ApellidoPaterno = "Noriega";
-        //    est.ApellidoMaterno = "Cazarez";
-        //    est.FechaNacimiento = new DateTime(1995,10,13);
-
-        //    var clave = crearClaveEstudiante(est,3);
-
-        //    return Json(new
-        //    {
-        //        clave = clave
-        //    });
-        //}
-
+        [HttpPost]
         public JsonResult analizarCalificaciones(List<Estudiante> listaEstudiantes)
         {
             try
@@ -94,7 +79,6 @@ namespace Examen2.Controllers
                 ExcelPackage.LicenseContext = LicenseContext.Commercial;
                 List<Estudiante> listaEstudiantes = new List<Estudiante>();
 
-                // Creamos una instancia de paquete de Excel de OfficeOpenXml
                 using (ExcelPackage paquete = new ExcelPackage())
                 {
                     var filename = path;
@@ -104,21 +88,10 @@ namespace Examen2.Controllers
                         paquete.Load(flujo);
                     }
 
-                    // Obtenemos la primera hoja del documento
                     ExcelWorksheet hoja1 = paquete.Workbook.Worksheets.First();
                     
-                    // Empezamos a leer a partir de la segunda fila
-                    for (int numFila = 2; numFila < hoja1.Dimension.End.Row ; numFila++)
+                    for (int numFila = 2; numFila < hoja1.Dimension.End.Row + 1 ; numFila++)
                     {
-                        //var nombres = hoja1.Cells[numFila, 1].Text; // NOMBRES
-                        //var apellidoPaterno = hoja1.Cells[numFila, 2].Text; // APELLIDO PATERNO
-                        //var apellidoMaterno = hoja1.Cells[numFila, 3].Text; // APELLIDO MATERNO
-                        //var fechaNacimiento = hoja1.Cells[numFila, 4].Text; // FECHA DE NACIMIENTO
-                        //var grado = hoja1.Cells[numFila, 5].Text; // GRADO
-                        //var grupo = hoja1.Cells[numFila, 6].Text; // GRUPO
-                        //var calificacion = hoja1.Cells[numFila, 7].Text; // CALIFICACION
-
-
                         Estudiante estudiante = new Estudiante
                         {
                             Nombres = hoja1.Cells[numFila, 1].Text, // NOMBRES
@@ -129,6 +102,7 @@ namespace Examen2.Controllers
                             Grupo = Convert.ToChar(hoja1.Cells[numFila, 6].Text), // GRUPO
                             Calificacion = Convert.ToDecimal(hoja1.Cells[numFila, 7].Text) // CALIFICACION                            
                         };
+
                         estudiante.Edad = (DateTime.Now.Date - estudiante.FechaNacimiento.Date).Days / 365;
                         estudiante.Clave = crearClaveEstudiante(estudiante, numVeces);
 
@@ -142,10 +116,6 @@ namespace Examen2.Controllers
             catch (Exception ex)
             {
                 throw ex;
-            }
-            finally
-            {
-                
             }
         }
 

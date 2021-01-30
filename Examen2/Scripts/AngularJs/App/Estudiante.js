@@ -56,6 +56,12 @@
         });
     }
 
+    $scope.HabilitarBoton = function () {
+        console("Desabilitado");
+        $('#btnUpload').prop("disabled", false);
+        $("#btnUpload").removeAttr('disabled');
+    }
+
     $scope.subirArchivoImportacion = function () {
         $('#txtVecesIterar').val("");
         $('#myModalImportarArchivo').modal("show");
@@ -97,7 +103,9 @@ function graficaBarrasCalificaciones(estudiantes, total) {
             ykeys: ['a'],
             labels: ['Calificación'],
             hideHover: 'auto',
-            redraw: true
+            redraw: true,
+            xLabelAngle: 60,
+            
         });
 
         morrilsBar.redraw();
