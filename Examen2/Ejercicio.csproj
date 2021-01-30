@@ -148,6 +148,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="README.txt" />
     <Content Include="Scripts\AngularJs\Angular\angular-route.js" />
     <Content Include="Scripts\AngularJs\Angular\angular-route.min.js" />
     <Content Include="Scripts\AngularJs\Angular\angular.js" />
