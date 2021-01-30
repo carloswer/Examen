@@ -1,9 +1,13 @@
 ﻿<!DOCTYPE html>
 <html ng-app="Examen" ng-controller="mainCtrl">
 <head>
+    <base href="/">
     <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <meta content="text/html; charset=iso-8859-1" http-equiv=Content-Type>
+    <title>@ViewBag.Title - Ejercicio</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
@@ -15,11 +19,13 @@
         <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
         <script src="http://cdn.oesmith.co.uk/morris-0.4.1.min.js"></script>*@
 
-    <script src="~/Scripts/jquery.min.js"></script>
+    
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
-    <script src="~/Scripts/raphael.min.js"></script>
-    <link href="~/Content/css/dropzone.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+    @*<script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>*@
+    <link href="~/Content/css/morris.css" rel="stylesheet" />
+    
+    
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -45,11 +51,14 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <p>&copy; @DateTime.Now.Year</p>
         </footer>
     </div>
 
-    <script src="~/Content/js/dropzone.js"></script>
+    <script src="~/Scripts/jquery.min.js"></script>
+    <script src="~/Scripts/raphael.min.js"></script>
+    <script src="~/Content/js/morris.js"></script>
+
     @Scripts.Render("~/bundles/jquery")
 
     @Scripts.Render("~/bundles/angular")

@@ -22,24 +22,51 @@ namespace Examen2.Controllers
             return View();
         }
 
-        public JsonResult obtenerEstudiantes()
+        //public JsonResult obtenerEstudiantes()
+        //{
+        //    Estudiante est = new Estudiante();
+        //    est.Nombres = "Carlos Eduardo";
+        //    est.ApellidoPaterno = "Noriega";
+        //    est.ApellidoMaterno = "Cazarez";
+        //    est.FechaNacimiento = new DateTime(1995,10,13);
+
+        //    var clave = crearClaveEstudiante(est,3);
+
+        //    return Json(new
+        //    {
+        //        clave = clave
+        //    });
+        //}
+
+        public JsonResult analizarCalificaciones(List<Estudiante> listaEstudiantes)
         {
-            Estudiante est = new Estudiante();
-            est.Nombres = "Carlos Eduardo";
-            est.ApellidoPaterno = "Noriega";
-            est.ApellidoMaterno = "Cazarez";
-            est.FechaNacimiento = new DateTime(1995,10,13);
-
-            var clave = crearClaveEstudiante(est,3);
-
-            return Json(new
+            try
             {
-                clave = clave
-            });
+                
+                var listaOrdenada = listaEstudiantes.OrderBy(x=>x.Calificacion).ToList();
+
+                var _estudianteMejor = listaOrdenada.Last();
+                var _estudiantePeor = listaOrdenada.First();
+
+                var cali = listaEstudiantes.Sum(x => x.Calificacion);
+
+                var _promedioCalificacion = listaEstudiantes.Sum(x => x.Calificacion) / listaEstudiantes.Count();
+
+                return Json(new
+                {
+                    estudianteMejor = _estudianteMejor,
+                    estudiantePeor = _estudiantePeor,
+                    promedio = _promedioCalificacion
+                });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         [HttpPost]
-        public JsonResult ImportarDatos()
+        public JsonResult ImportarDatos(int numVeces)
         {
             try
             {
@@ -102,8 +129,8 @@ namespace Examen2.Controllers
                             Grupo = Convert.ToChar(hoja1.Cells[numFila, 6].Text), // GRUPO
                             Calificacion = Convert.ToDecimal(hoja1.Cells[numFila, 7].Text) // CALIFICACION                            
                         };
-
-                        estudiante.Clave = crearClaveEstudiante(estudiante, 3);
+                        estudiante.Edad = (DateTime.Now.Date - estudiante.FechaNacimiento.Date).Days / 365;
+                        estudiante.Clave = crearClaveEstudiante(estudiante, numVeces);
 
                         listaEstudiantes.Add(estudiante);
                         
@@ -127,61 +154,32 @@ namespace Examen2.Controllers
         {
             try
             {
-                var abc = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
-                var abc2 = "";
+                var abc = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".ToList();
+                var abc1 = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".ToList();
 
                 var clave = "";
-                estudiante.Edad = (DateTime.Now.Date - estudiante.FechaNacimiento.Date).Days / 365;
-                //CARLOS EDUARDO NORIEGA CAZAREZ
+                var nuevaClave = "";
+
                 clave += estudiante.Nombres.ToUpper().Substring(0, 2);
                 clave += estudiante.ApellidoMaterno.ToUpper().Substring(estudiante.ApellidoMaterno.Length - 2, 2);
 
-                //CA EZ
-
-                var one = clave.ToCharArray()[0];
-                var two = clave.ToCharArray()[1];
-                var three = clave.ToCharArray()[2];
-                var four = clave.ToCharArray()[3];
-
-                char i = abc[0];
-                var check = false;
-                while (abc2.Length < abc.Length - 1)
+                while(veces != 0)
                 {
-                    if (!check)
-                    {
-                        var value = i - veces;
-                        if (value < 'A')
-                        {
-                            var dif = value - 'A';
-                            i = (char)('Z' - Math.Abs(dif));
-                        }
-                        else
-                            check = true;
-                    }
-                    else
-                    {
-                        if (i >= 'Z')
-                        {
-                            i = 'A';
-                            check = true;
-                        }
-                        else
-                            i++;
-                    }
+                    var letra = abc1.Last();
+                    abc1.Remove(letra);
+                    abc1.Insert(0, letra);
 
-                    abc2 += i + "";
-                    if (!check)
-                        i++;
+                    veces--;
                 }
 
-                clave = clave.Replace(one, (char)abc2[abc.IndexOf(one)]);
-                clave = clave.Replace(two, (char)abc2[abc.IndexOf(two)]);
-                clave = clave.Replace(three, (char)abc2[abc.IndexOf(three)]);
-                //clave = clave.Replace(four, (char)abc2[abc.IndexOf(four)]);
+                for (int i = 0; i <= clave.ToCharArray().Length - 1; i++)
+                {
+                    nuevaClave += abc1[abc.IndexOf(clave[i])];
+                }
 
-                clave += estudiante.Edad;
+                nuevaClave += estudiante.Edad;
 
-                return clave;
+                return nuevaClave;
             }
             catch (Exception ex)
             {

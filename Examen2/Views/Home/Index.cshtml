@@ -2,13 +2,27 @@
     ViewBag.Title = "Estudiantes";
 }
 
-<div class="content-wrapper" ng-controller="EstudiantesController" data-ng-init="obtenerEstudiantes()">
-    <div ng-show="MostrarVista == 0;">
+<style>
+    .centarTexto{
+        text-align:center;
+    }
+
+    .formatoTexo{
+        font-size: 15px;
+        font-weight: bold;
+    }
+</style>
+
+<div  ng-controller="EstudiantesController" data-ng-init="obtenerEstudiantes()">
+    <div>
         <section class="content-header">
+        
             <h1> Estudiantes </h1>
+            <p style="float:right; margin-top:-25px" class="formatoTexo"><span ng-bind="NombreCiudad"></span>,  Temperatura: <span ng-bind="Temperatura"></span>°C </p>
             <ol class="breadcrumb">
-                <li class="active"> Estudiantes </li>
+                <li class="active">  </li>
             </ol>
+
         </section>
 
         <section class="content reloadPage">
@@ -16,22 +30,53 @@
 
             <div class="box">
                 <div class="box-header">
-                    <span style="font-weight:bold; font-size: 15px;">Total:</span>&nbsp;&nbsp;<span style="font-size: 16px;" ng-bind="totalEstudiantes"></span>
-                    <button ng-click="graficarCalificaciones()">Graficar calificaciones</button>
-                    <button ng-click="subirArchivoImportacion()">Importar archivo</button>
                 </div>
-                <div class="box-body table-responsive no-padding">
-                    <table class="table table-sm table-striped table-hover compact">
+                <div class="box-body">
+
+                    <div class="row formatoTexo" ng-show="totalEstudiantes > 0">
+                        <div class="col-lg-6 ">
+                            <h4>Mejor estudiante</h4>
+                            <p>Nombre: <span ng-bind="MejorEstudiante.Nombre_Completo"> </span></p>
+                            <p>Calificación: <span ng-bind="MejorEstudiante.Calificacion"> </span></p>
+                        </div>
+                        <div class="col-lg-6 ">
+                            <h4>Peor estudiante:</h4>
+                            <p>Nombre: <span ng-bind="PeorEstudiante.Nombre_Completo"> </span></p>
+                            <p>Calificación: <span ng-bind="PeorEstudiante.Calificacion"> </span></p>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <p>Promedio de calificación general: <span ng-bind="PromedioCalificaciones | number:2"></span></p>
+                        </div>
+                    </div>
+
+                    <ol class="breadcrumb">
+                        <li class="active">  </li>
+                    </ol>
+
+                    @*<h3>Listado de estudiantes <span style="float:right; font-size:18px;">Total: {{totalEstudiantes}}</span></h3>*@
+
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <h3>Listado de estudiantes</h3>
+                        </div>
+                        <div class="col-lg-4 col-lg-offset-4">
+                            <button class="form-control " style="float:right; margin-top:20px;" ng-click="subirArchivoImportacion()">  Importar archivo</button>
+                        </div>
+                    </div>
+
+                    <br />
+                    <table class="table table-sm table-striped table-hover compact  table-responsive no-padding">
                         <thead>
                             <tr>
                                 <th> NOMBRE </th>
                                 <th> APELLIDO PATERNO </th>
                                 <th> APELLIDO MATERNO </th>
-                                <th> FECHA NACIMIENTO </th>
-                                <th> GRADO </th>
-                                <th> GRUPO </th>
-                                <th> CALIFICACIÓN </th>
-                                <th> CLAVE </th>
+                                <th class="centarTexto"> FECHA NACIMIENTO </th>
+                                <th class="centarTexto"> GRADO </th>
+                                <th class="centarTexto"> GRUPO </th>
+                                <th class="centarTexto"> CALIFICACIÓN </th>
+                                <th class="centarTexto"> CLAVE </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -39,19 +84,65 @@
                                 <td ng-bind="d.Nombres"></td>
                                 <td ng-bind="d.ApellidoPaterno"></td>
                                 <td ng-bind="d.ApellidoMaterno"></td>
-                                <td ng-bind="d.FechaNacimiento_String"></td>
-                                <td ng-bind="d.Grado"></td>
-                                <td ng-bind="d.Grupo"></td>
-                                <td ng-bind="d.Calificacion"></td>
-                                <td ng-bind="d.Clave"></td>
+                                <td class="centarTexto" ng-bind="d.FechaNacimiento_String"></td>
+                                <td class="centarTexto" ng-bind="d.Grado"></td>
+                                <td class="centarTexto" ng-bind="d.Grupo"></td>
+                                <td class="centarTexto" ng-bind="d.Calificacion"></td>
+                                <td class="centarTexto" ng-bind="d.Clave"></td>
                             </tr>
                         </tbody>
                     </table>
 
+                    <hr /><br /><br />
+
+                    <h3>Grafica de calificaciones</h3>
+                    <div class="box-body chart-responsive" id="contenedorGrafica">
+                        <div class="chart" id="bar-chart-calificaciones" style="display:block; height: 500px;"></div>
+                    </div>
+
+                    <div id="divPadre">
+                        @*<div id="exTab2">
+                <ul class="nav nav-tabs">
+                    <li id="itemBarListado" class="active">
+                        <a href="#tabListadoEstudiantes" class="active" data-toggle="tab" style="font-size: 16px; ">Listado estudiantes</a>
+                    </li>
+
+                    <li id="itemBarGrafica" ng-click="graficarCalificaciones()">
+                        <a href="#tabGraficaCalificaciones" data-toggle="tab" style="font-size: 16px; ">Grafica calificaciones</a>
+                    </li>
+
+                </ul>
+            </div>*@
+
+                        @*<div class="tab-content">
+
+                <div class="tab-pane active" id="tabListadoEstudiantes">
+
+
+
+                </div>
+
+                <div class="tab-pane active" id="tabGraficaCalificaciones">
+
+
+
+
+
+
+
+
+                </div>
+
+            </div>*@
+
+                    </div>
+
+
+
+
                 </div>
             </div>
         </section>
-
 
         <div id="myModalImportarArchivo" class="modal fade" role="dialog">
             <div class="modal-dialog">
@@ -60,15 +151,19 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Modal Header</h4>
+                        <h4 class="modal-title">Subir archivo de calificaciones</h4>
                     </div>
                     <div class="modal-body">
-                        <input type="file" id="FileUpload1" />
-                        <input type="button" id="btnUpload" value="Upload Files" />
+                        <input type="file" id="FileUpload" />
                         <button id="btnGuardarInfo" ng-click="GuardarListaSessionStorage()" hidden></button>
+
+                        <br />
+                        <hr />
+                        <label>Número de veces</label>
+                        <input type="number" class="form-control" id="txtVecesIterar" />
                     </div>
                     <div class="modal-footer">
-                        <button id="btnCargarArchivosColaborador" class="btn btn-sm btn-success">Subir archivo</button>
+                        <button id="btnUpload" class="btn btn-sm btn-success">Subir archivo</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
@@ -77,12 +172,12 @@
         </div>
 
 
+        
+
     </div>
 
 
 
-
-    @Html.Action("Grafica", "Home")
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -90,10 +185,9 @@
     $(document).ready(function () {
         $('#btnUpload').click(function () {
 
-            // Checking whether FormData is available in browser
             if (window.FormData !== undefined) {
 
-                var fileUpload = $("#FileUpload1").get(0);
+                var fileUpload = $("#FileUpload").get(0);
                 var files = fileUpload.files;
 
                 // Create FormData object
@@ -105,7 +199,7 @@
                 }
 
                 // Adding one more key to FormData object
-                fileData.append('username', 'Manas');
+                fileData.append('numVeces', $('#txtVecesIterar').val());
 
                 $.ajax({
                     url: '/Home/ImportarDatos',
@@ -125,8 +219,13 @@
                     }
                 });
             } else {
-                alert("FormData is not supported.");
+                alert("Error");
             }
+
+            $('#myModalImportarArchivo').modal("hide");
+
         });
     });
+
+
 </script> 

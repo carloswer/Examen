@@ -2,43 +2,78 @@
 
     $scope.Datos = [];
     $scope.listaEstudiantes = [];
+    $scope.totalEstudiantes = 0;
 
     $scope.obtenerEstudiantes = function () {
-        $scope.MostrarVista = 0;
 
-        $http.post("/Home/obtenerEstudiantes").then(function (dataResult) {
-            $scope.listaEstudiantes = dataResult.data.listaEstudiantes;
-            $scope.totalEstudiantes = dataResult.data.listaEstudiantes.length;
-            console.log($scope.listaEstudiantes);
-            
-        }, function (error) {
-            console.log(error);
-        }).finally(function () {
+        var listadoEstudiantes = sessionStorage.getItem("listaEstudiantes");
 
-        });
+        if (listadoEstudiantes != null && listadoEstudiantes != undefined) {
+            var lista = JSON.parse(listadoEstudiantes)
+            $scope.listaEstudiantes = lista;
+            $scope.totalEstudiantes = $scope.listaEstudiantes.length;
+
+            $scope.analizarCalificaciones();
+        }
+
+        $scope.verClima();
     }
 
     $scope.GuardarListaSessionStorage = function () {
         var listadoEstudiantes = sessionStorage.getItem("listaEstudiantes");
         var lista = JSON.parse(listadoEstudiantes)
         $scope.listaEstudiantes = lista;
+        $scope.totalEstudiantes = $scope.listaEstudiantes.length;
+
+        $scope.analizarCalificaciones();
     }
 
+    $scope.analizarCalificaciones = function () {
+
+        $http.post("/Home/analizarCalificaciones", $scope.listaEstudiantes).then(function (dataResult) {
+            $scope.MejorEstudiante = dataResult.data.estudianteMejor;
+            $scope.PeorEstudiante = dataResult.data.estudiantePeor;
+            $scope.PromedioCalificaciones = dataResult.data.promedio;
+
+        }, function (error) {
+            console.log(error);
+        }).finally(function () {
+            $scope.graficarCalificaciones();
+        });
+    }
+
+    $scope.verClima = function () {
+
+        var city_Id = "4013704";
+        var API_KEY = "85629cf1eb25797e1214d0552b942c43";
+
+        var url = "https://api.openweathermap.org/data/2.5/weather?lang=es&units=metric" + "&id=" + city_Id +  "&appid=" + API_KEY;
+        $http.get(url).then(function (response) {
+            console.log(response);
+            $scope.NombreCiudad = response.data.name;
+            $scope.Temperatura = response.data.main.temp;
+
+        });
+    }
 
     $scope.subirArchivoImportacion = function () {
+        $('#txtVecesIterar').val("");
         $('#myModalImportarArchivo').modal("show");
     }
 
     $scope.graficarCalificaciones = function () {
         graficaBarrasCalificaciones($scope.listaEstudiantes, $scope.totalEstudiantes);
-        $scope.MostrarVista = 1;
+        $('#tabGraficaCalificaciones').addClass('active');
+        $('#itemBarGrafica').addClass('active');
     }
+
+    //$scope.refreshChart = function () {
+    //    $("#contenedorGrafica").load();
+    //}
 
     $scope.VolverInicio = function () {
         $scope.MostrarVista = 0;
     }
-
-    
 
 }]);
 
@@ -55,17 +90,17 @@ function graficaBarrasCalificaciones(estudiantes, total) {
     try {
         var morrilsBar = new Morris.Bar({
             element: 'bar-chart-calificaciones',
+            resize: true,
             data: datos,            
             barColors: ['#00a65a', '#DB3535'],
             xkey: 'y',
-            animate: true,
             ykeys: ['a'],
-            labels: ['Total'],
+            labels: ['Calificación'],
             hideHover: 'auto',
-            parseTime: false,
-            resize: true,
             redraw: true
         });
+
+        morrilsBar.redraw();
 
     } catch (err) {
         console.log(err);
@@ -74,5 +109,7 @@ function graficaBarrasCalificaciones(estudiantes, total) {
 
     $('#bar-chart-calificaciones').resize(function () {
         morrilsBar.redraw();
+        window.refre
     });
+
 }
